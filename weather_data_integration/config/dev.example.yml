@@ -1,0 +1,31 @@
+environment: dev
+
+source:
+  name: open_meteo
+  base_url: https://api.open-meteo.com/v1/forecast
+  timezone: America/Sao_Paulo
+  cities:
+    - name: Brasilia
+      latitude: -15.793889
+      longitude: -47.882778
+    - name: Sao Paulo
+      latitude: -23.55052
+      longitude: -46.633308
+    - name: Rio de Janeiro
+      latitude: -22.906847
+      longitude: -43.172896
+
+storage:
+  catalog: main
+  schema: weather_dev
+  bronze_table: weather_bronze
+  silver_table: weather_silver
+  gold_table: weather_daily_gold
+  quarantine_table: weather_quarantine
+
+target:
+  jdbc_url: jdbc:postgresql://YOUR_REACHABLE_POSTGRES_HOST:5432/weather
+  schema: public
+  user_secret_scope: weather
+  user_secret_key: postgres-user
+  password_secret_key: postgres-password

@@ -1,0 +1,23 @@
+name: Deploy DEV
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      - name: Deploy bundle to DEV
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_BUNDLE_VAR_databricks_host: ${{ secrets.DATABRICKS_HOST }}
+        run: |
+          databricks bundle validate -t dev
+          databricks bundle deploy -t dev
+          databricks bundle run weather_pipeline -t dev

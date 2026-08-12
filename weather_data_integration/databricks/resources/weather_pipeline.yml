@@ -1,0 +1,64 @@
+resources:
+  jobs:
+    weather_pipeline:
+      name: weather-data-integration-${bundle.target}
+      tags:
+        env: ${bundle.target}      # Vai criar a tag "env: dev" ou "env: prod"
+        projeto: weather-data
+      max_concurrent_runs: 1
+      schedule:
+        quartz_cron_expression: "0 0 * * * ?"
+        timezone_id: "America/Sao_Paulo"
+        pause_status: PAUSED
+      tasks:
+        - task_key: environment_validation
+          notebook_task:
+            notebook_path: ../notebooks/phase4/01_environment_validation.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+
+        - task_key: incremental_bronze
+          depends_on:
+            - task_key: environment_validation
+          notebook_task:
+            notebook_path: ../notebooks/phase3/01_incremental_bronze.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+
+        - task_key: incremental_silver
+          depends_on:
+            - task_key: incremental_bronze
+          notebook_task:
+            notebook_path: ../notebooks/phase3/02_incremental_silver.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+
+        - task_key: data_quality
+          depends_on:
+            - task_key: incremental_silver
+          notebook_task:
+            notebook_path: ../notebooks/phase3/03_data_quality_metrics.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+
+        - task_key: incremental_gold
+          depends_on:
+            - task_key: data_quality
+          notebook_task:
+            notebook_path: ../notebooks/phase3/04_gold_incremental.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+
+        - task_key: smoke_test
+          depends_on:
+            - task_key: incremental_gold
+          notebook_task:
+            notebook_path: ../notebooks/phase4/02_smoke_check.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}

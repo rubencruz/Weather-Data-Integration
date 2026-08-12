@@ -1,0 +1,43 @@
+bundle:
+  name: weather-data-integration
+
+include:
+  - databricks/resources/*.yml
+
+variables:
+  databricks_host:
+    description: Databricks workspace URL
+    default: ""
+  catalog:
+    description: Unity Catalog catalog used by the environment
+    default: main
+  schema:
+    description: Environment-specific schema
+    default: weather_dev
+
+sync:
+  include:
+    - src/**
+    - databricks/**
+    - architecture/**
+    #- docs/**
+
+artifacts: {}
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-39ee3252-8e93.cloud.databricks.com
+    variables:
+      catalog: dev
+      schema: weather_dev
+
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-39ee3252-8e93.cloud.databricks.com
+    variables:
+      catalog: prod
+      schema: weather_prod
