@@ -9,6 +9,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: development
+    defaults:
+      run:
+        working-directory: ./
     steps:
       - uses: actions/checkout@v4
       - uses: databricks/setup-cli@main
