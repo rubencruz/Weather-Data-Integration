@@ -1,53 +1,46 @@
 # Architecture
 
-## Phase 1 — MVP
-
-```mermaid
-flowchart LR
-    A[Open-Meteo API] -->|HTTP GET JSON| B[Databricks Notebook]
-    B --> C[PySpark DataFrame]
-    C -->|JDBC| D[(PostgreSQL)]
-```
-
-## Phase 2 — Data Engineering
-
-```mermaid
-flowchart LR
-    A[Open-Meteo API] --> B[Bronze Delta]
-    B --> C[Silver Delta]
-    C --> D{Data Quality}
-    D -->|valid| E[Gold Delta]
-    D -->|invalid| F[Quarantine Delta]
-    E -->|JDBC| G[(PostgreSQL)]
-```
-
-## Logical data flow
+## Current architecture - Phases 3 to 5
 
 ```text
-Source
-  |
-  | REST / JSON
-  v
-Bronze
-  |
-  | schema + normalization + deduplication
-  v
-Silver
-  |
-  +---- invalid ----> Quarantine
-  |
-  +---- valid ------> Gold
-                          |
-                          | JDBC
-                          v
-                      PostgreSQL
+Open-Meteo REST API
+        |
+        v
+Databricks Serverless / PySpark
+        |
+        v
++---------------------------+
+| Bronze Delta              |
+| raw snapshots / idempotent|
++-------------+-------------+
+              |
+              v
++---------------------------+
+| Silver Delta              |
+| typed observations        |
++-------------+-------------+
+              |
+       +------+------+
+       |             |
+       v             v
+ Data Quality     AI Features
+       |             |
+       v             v
+ Gold Delta      Anomaly Detection
+                     |
+                     v
+               AI Insights Delta
+                     |
+             optional ai_query
+                     |
+                     v
+               AI endpoint
 ```
 
-## Design principles
+## Storage
 
-- Raw data is preserved before transformation.
-- Transformations are deterministic and idempotent.
-- Data quality failures do not silently disappear.
-- Environment configuration is externalized.
-- Secrets are never stored in Git.
-- The same transformation code is intended for DEV and PROD.
+Delta Lake / Unity Catalog managed tables are the cloud system of record. PostgreSQL is retained only for optional local learning/testing and is not required by the Databricks Serverless pipeline.
+
+## AI boundary
+
+AI consumes trusted Silver/Gold-derived data and writes explicit Delta outputs. Generative AI is optional and does not become a dependency of ingestion, quality or core analytics.

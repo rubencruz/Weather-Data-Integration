@@ -1,0 +1,14 @@
+flowchart LR
+    API[Open-Meteo REST API] --> B[Databricks Serverless]
+    B --> BR[Bronze Delta]
+    BR --> SI[Silver Delta]
+    SI --> DQ[Data Quality]
+    DQ -->|valid| GO[Gold Delta]
+    DQ -->|invalid| Q[Quarantine Delta]
+    GO --> ST[Smoke Test]
+
+    GH[GitHub] --> CI[GitHub Actions]
+    CI --> DEV[Databricks DEV]
+    CI --> PROD[Databricks PROD]
+    DEV --> BR
+    PROD --> BR

@@ -1,0 +1,16 @@
+flowchart TD
+    A[Open-Meteo] --> B[Bronze Delta]
+    B --> C[Silver Delta]
+    C --> D[Data Quality]
+    D --> E[Gold Delta]
+    E --> F[01 AI Features]
+    F --> G[weather_ai_features]
+    G --> H[02 AI Weather Analysis]
+    H --> I[weather_ai_analysis]
+    I --> J[03 AI Insights]
+    F --> J
+    J --> K[weather_ai_insights]
+    K --> L[04 AI Quality Check]
+    I --> L
+    F --> L
+    L --> M[weather_ai_quality]

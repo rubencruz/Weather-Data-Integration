@@ -30,3 +30,22 @@ MVP target table.
 | avg_wind_speed_kmh | numeric |
 | record_count | bigint |
 | processed_at | timestamp |
+
+
+## Phase 5 AI data products
+
+```text
+weather_silver
+     |
+weather_daily_gold
+     |
+weather_ai_features
+     |
+weather_ai_analysis
+     |
+weather_ai_insights
+     |
+weather_ai_quality
+```
+
+The AI Features layer is deterministic and contains model-ready context. Generative AI is isolated in the analysis stage and can be disabled without changing the downstream contracts.

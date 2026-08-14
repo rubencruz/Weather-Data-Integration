@@ -1,0 +1,9 @@
+flowchart LR
+    A[Open-Meteo] --> B[Incremental Ingestion]
+    B --> C[Bronze Delta]
+    C --> D[Incremental Silver]
+    D --> E[Silver Delta]
+    E --> F[Data Quality]
+    F -->|valid| G[Gold Aggregation]
+    F -->|invalid| H[Quarantine Delta]
+    G --> I[Gold Delta]

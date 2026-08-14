@@ -1,0 +1,14 @@
+flowchart TD
+    A[Developer] --> B[Pull Request]
+    B --> C[GitHub Actions CI]
+    C --> D[PyTest]
+    C --> E[Databricks Bundle Validate]
+    D --> F{Checks pass?}
+    E --> F
+    F -->|yes| G[Merge to develop]
+    G --> H[Deploy DEV]
+    H --> I[Integration / Smoke Test]
+    I --> J[Merge to main]
+    J --> K[Production approval]
+    K --> L[Deploy PROD]
+    L --> M[Smoke Test]

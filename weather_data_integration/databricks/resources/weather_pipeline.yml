@@ -54,6 +54,44 @@ resources:
               catalog: ${var.catalog}
               schema: ${var.schema}
 
+        - task_key: ai_features
+          depends_on:
+            - task_key: incremental_gold
+          notebook_task:
+            notebook_path: ../notebooks/phase5/01_ai_features.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+
+        - task_key: ai_weather_analysis
+          depends_on:
+            - task_key: ai_features
+          notebook_task:
+            notebook_path: ../notebooks/phase5/02_ai_weather_analysis.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              enable_llm: "false"
+              ai_endpoint: ""
+
+        - task_key: ai_insights
+          depends_on:
+            - task_key: ai_weather_analysis
+          notebook_task:
+            notebook_path: ../notebooks/phase5/03_ai_insights.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+
+        - task_key: ai_quality_check
+          depends_on:
+            - task_key: ai_insights
+          notebook_task:
+            notebook_path: ../notebooks/phase5/04_ai_quality_check.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+
         - task_key: smoke_test
           depends_on:
             - task_key: incremental_gold
