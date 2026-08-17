@@ -1,0 +1,6 @@
+{
+  "weather_databricks_job_id": "1115529242462150",
+  "weather_environment": "dev",
+  "weather_catalog": "dev",
+  "weather_schema": "weather_dev"
+}
