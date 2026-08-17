@@ -16,6 +16,7 @@ services:
       AIRFLOW_CONN_DATABRICKS_DEFAULT: "databricks://"
       AIRFLOW_VAR_WEATHER_DATABRICKS_JOB_ID: 1115529242462150
       AIRFLOW_VAR_WEATHER_DATABRICKS_HOST: "https://dbc-39ee3252-8e93.cloud.databricks.com"
+      AIRFLOW_VAR_WEATHER_AUDIT_FILE: /opt/airflow/logs/weather_pipeline_audit.jsonl
 
       _AIRFLOW_WWW_USER_USERNAME: admin
       _AIRFLOW_WWW_USER_PASSWORD: admin
@@ -30,5 +31,5 @@ services:
       - ./dags:/opt/airflow/dags
       - ./plugins:/opt/airflow/plugins
       - ./config:/opt/airflow/config
-
+      - ./logs:/opt/airflow/logs
     command: standalone

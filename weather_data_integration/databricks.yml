@@ -14,6 +14,9 @@ variables:
   schema:
     description: Environment-specific schema
     default: weather_dev
+  min_quality_score:
+    description: minimum quality score
+    default: 0.95
 
 sync:
   include:
@@ -33,6 +36,7 @@ targets:
     variables:
       catalog: dev
       schema: weather_dev
+      min_quality_score: 0.95
 
   prod:
     mode: production

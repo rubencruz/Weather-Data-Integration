@@ -11,6 +11,8 @@ from airflow.models import Variable
 from airflow.providers.databricks.operators.databricks import DatabricksRunNowOperator
 from airflow.operators.empty import EmptyOperator
 
+from pipeline_audit import write_audit_event
+
 #JOB_ID = Variable.get("weather_databricks_job_id", default_var="0")
 JOB_ID = Variable.get("WEATHER_DATABRICKS_JOB_ID", default_var=0)
 
@@ -21,15 +23,24 @@ DEFAULT_ARGS = {
     "retry_delay": timedelta(minutes=1),
 }
 
+def audit_success(context):
+    write_audit_event("DAG_SUCCESS", context)
+
+
+def audit_failure(context):
+    write_audit_event("DAG_FAILURE", context)
+
 with DAG(
-    dag_id="weather_data_integration_phase6",
+    dag_id="weather_data_integration_phase7",
     description="Orchestrates the Databricks Weather Data Integration pipeline",
     start_date=datetime(2026, 1, 1),
     schedule="0 1 * * *",
     catchup=False,
     max_active_runs=1,
     default_args=DEFAULT_ARGS,
-    tags=["weather", "databricks", "delta", "ai", "phase6"],
+    on_success_callback=audit_success,
+    on_failure_callback=audit_failure,
+    tags=["weather", "databricks", "delta", "ai", "quality", "observability", "phase7"],
 ) as dag:
     start = EmptyOperator(task_id="start")
 
